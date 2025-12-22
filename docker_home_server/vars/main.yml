@@ -1,0 +1,3 @@
+---
+# vars file for docker_home_server
+home_server_path: "/opt/home-server"

@@ -1,0 +1,5 @@
+---
+- hosts: test_hosts
+  become: yes
+  roles:
+    - docker_home_server

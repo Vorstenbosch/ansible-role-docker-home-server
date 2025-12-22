@@ -1,0 +1,43 @@
+---
+# tasks file for docker_home_server
+- name: Install base packages
+  ansible.builtin.package:
+    name:
+      - dnf-utils
+      - git
+    state: present
+
+- name: Add Docker CE repository
+  ansible.builtin.yum_repository:
+    name: docker-ce
+    description: Docker CE Repository
+    baseurl: https://download.docker.com/linux/rhel/$releasever/$basearch/stable
+    gpgcheck: yes
+    gpgkey: https://download.docker.com/linux/rhel/gpg
+    enabled: yes
+
+- name: install docker packages
+  ansible.builtin.package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+    state: present
+
+- name: Create the Docker deployment user
+  ansible.builtin.user:
+    name: home-server
+    groups: docker
+    append: yes
+    shell: /sbin/nologin  # Security: user cannot log in via password
+
+- name: Create directory to place the docker compose environment files (volumes, env files, etc)
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: home-server
+    mode: '0755'
+  loop:
+      - "{{ home_server_path }}"
+      - "{{ home_server_path }}/data"

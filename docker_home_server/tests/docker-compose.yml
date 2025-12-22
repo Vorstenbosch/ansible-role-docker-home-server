@@ -1,0 +1,18 @@
+---
+version: '3.8'
+
+services:
+  rocky:
+    image: geerlingguy/docker-rockylinux9-ansible:latest
+    container_name: ansible-test-rocky
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ../../:/ansible-role:ro
+    networks:
+      - test-network
+    command: /usr/sbin/init
+
+networks:
+  test-network:
+    driver: bridge

@@ -1,0 +1,2 @@
+[test_hosts]
+rocky ansible_connection=docker ansible_host=ansible-test-rocky ansible_user=root
