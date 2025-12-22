@@ -1,2 +1,5 @@
 ---
 # defaults file for docker_home_server
+
+# Set to 'vfs' for WSL/nested Docker environments, leave empty for production (uses overlay2)
+docker_storage_driver: ""

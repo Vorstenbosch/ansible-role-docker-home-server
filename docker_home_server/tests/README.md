@@ -26,7 +26,7 @@ ansible-galaxy collection install ansible.posix community.general
 
 ```bash
 # Test the playbook
-ANSIBLE_ROLES_PATH=../.. ansible-playbook -i inventory test.yml
+ANSIBLE_ROLES_PATH=../.. ansible-playbook -i -vvvv inventory test.yml
 ```
 
 ### 4. Access the container for manual testing

@@ -25,6 +25,24 @@
       - docker-compose-plugin
     state: present
 
+- name: Create Docker daemon configuration directory
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+    mode: '0755'
+  when: docker_storage_driver != ""
+
+- name: Configure Docker daemon storage driver
+  ansible.builtin.copy:
+    content: |
+      {
+        "storage-driver": "{{ docker_storage_driver }}"
+      }
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  notify: restart docker
+  when: docker_storage_driver != ""
+
 - name: Create the Docker deployment user
   ansible.builtin.user:
     name: home-server
@@ -41,3 +59,24 @@
   loop:
       - "{{ home_server_path }}"
       - "{{ home_server_path }}/data"
+
+- name: Copy Node Exporter Docker Compose file
+  ansible.builtin.copy:
+    src: node-exporter-docker-compose.yml
+    dest: "{{ home_server_path }}/node-exporter-docker-compose.yml"
+    owner: home-server
+    mode: '0644'
+
+- name: Ensure Docker service is started and enabled
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Start Node Exporter with Docker Compose
+  ansible.builtin.shell:
+    cmd: docker compose -f node-exporter-docker-compose.yml up -d
+    chdir: "{{ home_server_path }}"
+  become_user: home-server
+  register: node_exporter_output
+  changed_when: "'Started' in node_exporter_output.stderr or 'Running' in node_exporter_output.stderr"

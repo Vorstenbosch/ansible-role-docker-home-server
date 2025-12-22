@@ -1,2 +1,7 @@
 ---
 # handlers file for docker_home_server
+
+- name: restart docker
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
