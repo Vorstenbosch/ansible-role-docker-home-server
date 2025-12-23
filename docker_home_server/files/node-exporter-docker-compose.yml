@@ -15,3 +15,8 @@ services:
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     cap_add:
       - SYS_TIME
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 64M

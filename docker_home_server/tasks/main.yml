@@ -1,10 +1,14 @@
 ---
 # tasks file for docker_home_server
+
+# SSH Configuration (run first to ensure access)
+- name: Include SSH configuration tasks
+  ansible.builtin.import_tasks: ssh.yml
+
 - name: Install base packages
   ansible.builtin.package:
     name:
       - dnf-utils
-      - git
     state: present
 
 - name: Add Docker CE repository
@@ -16,14 +20,40 @@
     gpgkey: https://download.docker.com/linux/rhel/gpg
     enabled: yes
 
-- name: install docker packages
+- name: install packages
   ansible.builtin.package:
     name:
       - docker-ce
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
+      - git
+      - openssl
+      - openssh-server
     state: present
+
+- name: Update all packages to the latest version
+  ansible.builtin.package:
+    name: '*'
+    state: latest
+    update_cache: yes
+
+- name: Clean up package cache
+  ansible.builtin.package:
+    autoremove: yes
+
+- name: Fetch the list of services that need restarting
+  ansible.builtin.command: needs-restarting -s
+  register: services_to_restart
+  failed_when: false
+  changed_when: false
+
+- name: Restart services that need it
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: restarted
+  loop: "{{ services_to_restart.stdout_lines }}"
+  when: services_to_restart.stdout_lines | length > 0
 
 - name: Create Docker daemon configuration directory
   ansible.builtin.file:

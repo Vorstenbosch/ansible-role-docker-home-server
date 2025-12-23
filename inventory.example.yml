@@ -1,0 +1,18 @@
+# Example inventory for Rocky Linux hosts (YAML format)
+
+all:
+  children:
+    rocky_servers:
+      hosts:
+        rocky-server-01:
+          ansible_host: 192.168.178.10
+      
+      vars:
+        ansible_user: rocky
+        
+        # SSH will automatically try key first, then password
+        # This works for both first run (password) and subsequent runs (key)
+        ansible_ssh_private_key_file: ~/.ssh/id_ed25519  # or your key path
+        
+        # Allow both authentication methods
+        ansible_ssh_common_args: '-o PreferredAuthentications=publickey,password -o PubkeyAuthentication=yes -o PasswordAuthentication=yes'

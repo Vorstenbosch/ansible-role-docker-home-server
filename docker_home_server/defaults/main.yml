@@ -3,3 +3,10 @@
 
 # Set to 'vfs' for WSL/nested Docker environments, leave empty for production (uses overlay2)
 docker_storage_driver: ""
+
+# SSH public key to add (required if configure_ssh is true)
+# Example: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB... user@hostname"
+ssh_public_key: ""
+
+# User to configure SSH for (usually your admin user)
+ssh_user: "{{ ansible_user }}"

@@ -1,0 +1,31 @@
+---
+# Universal playbook - works for both first run and subsequent runs
+# SSH tries key first, falls back to password automatically
+#
+# First run: ansible-playbook -i inventory setup.yml --ask-pass --ask-become-pass
+# Later runs: ansible-playbook -i inventory setup.yml (uses key automatically)
+
+- name: Setup Rocky Linux Docker Home Server
+  hosts: rocky_servers
+  become: yes
+  
+  roles:
+    - role: docker_home_server
+      vars:
+        ssh_public_key: "ssh-ed25519 bla your@email.com"
+        ssh_user: "{{ ansible_user }}"
+        docker_storage_driver: ""
+
+  post_tasks:
+    - name: Display status
+      ansible.builtin.debug:
+        msg: |
+          ========================================
+          SETUP COMPLETE!
+          ========================================
+          Your SSH key has been installed.
+          Password authentication is DISABLED.
+          Docker and Node Exporter are running.
+
+          Keep in mind that no ports are open by default
+          ========================================

@@ -2,6 +2,6 @@
 - hosts: test_hosts
   become: yes
   roles:
-    - role: docker_home_server
+    - role: ../../docker_home_server
       vars:
         docker_storage_driver: "vfs"
